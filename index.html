@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SYNTHWAVE — Player</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- Ambient layers -->
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+
+  <div class="app">
+
+    <!-- ══ PLAYER CARD ════════════════════════════════ -->
+    <div class="player-card">
+
+      <!-- Header brand + mode buttons -->
+      <div class="player-header">
+        <span class="brand">◈ SYNTHWAVE</span>
+        <div class="header-controls">
+          <button class="hdr-btn" id="btnShuffle" aria-label="Shuffle" title="Shuffle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="16 3 21 3 21 8"/><line x1="4" y1="20" x2="21" y2="3"/>
+              <polyline points="21 16 21 21 16 21"/><line x1="15" y1="15" x2="21" y2="21"/>
+            </svg>
+          </button>
+          <button class="hdr-btn" id="btnRepeat" aria-label="Repeat" title="Repeat">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+              <polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Vinyl disc + waveform visualizer -->
+      <div class="disc-wrap">
+        <div class="disc" id="disc">
+          <div class="disc-inner">
+            <div class="disc-label">
+              <span class="disc-note">♪</span>
+            </div>
+          </div>
+          <div class="disc-shine"></div>
+        </div>
+        <div class="disc-shadow"></div>
+        <div class="visualizer" id="visualizer">
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <!-- Song info -->
+      <div class="song-info">
+        <h1 class="song-title" id="songTitle">Neon Horizon</h1>
+        <p  class="song-artist" id="songArtist">Synthwave Collective</p>
+        <span class="song-album"  id="songAlbum">Retrograde · 2024</span>
+      </div>
+
+      <!-- Progress bar -->
+      <div class="progress-section">
+        <span class="time-label" id="timeCurrent">0:00</span>
+        <div class="progress-track" id="progressTrack" role="slider" aria-label="Seek" tabindex="0">
+          <div class="progress-fill" id="progressFill">
+            <div class="progress-thumb"></div>
+          </div>
+        </div>
+        <span class="time-label" id="timeDuration">0:00</span>
+      </div>
+
+      <!-- Transport controls -->
+      <div class="controls">
+        <button class="ctrl-btn secondary" id="btnPrev" aria-label="Previous">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+        </button>
+        <button class="ctrl-btn play-btn" id="btnPlay" aria-label="Play / Pause">
+          <svg class="icon-play"  viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          <svg class="icon-pause" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+        </button>
+        <button class="ctrl-btn secondary" id="btnNext" aria-label="Next">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6h2v12h-2z"/></svg>
+        </button>
+      </div>
+
+      <!-- Volume -->
+      <div class="volume-section">
+        <button class="vol-icon" id="btnMute" aria-label="Mute/Unmute">
+          <svg id="volIcon" viewBox="0 0 24 24" fill="currentColor">
+            <path id="volPath" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02z"/>
+          </svg>
+        </button>
+        <div class="vol-track" id="volTrack" role="slider" aria-label="Volume" tabindex="0">
+          <div class="vol-fill" id="volFill">
+            <div class="vol-thumb"></div>
+          </div>
+        </div>
+        <span class="vol-pct" id="volPct">80%</span>
+      </div>
+
+      <audio id="audio" preload="auto"></audio>
+    </div><!-- /player-card -->
+
+    <!-- ══ PLAYLIST ════════════════════════════════════ -->
+    <div class="playlist-card">
+      <div class="pl-header">
+        <span class="pl-title">PLAYLIST</span>
+        <span class="pl-count" id="plCount">8 tracks</span>
+      </div>
+      <ul class="pl-list" id="plList" role="listbox" aria-label="Playlist"></ul>
+    </div>
+
+  </div><!-- /app -->
+
+  <script src="script.js"></script>
+</body>
+</html>

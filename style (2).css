@@ -1,0 +1,531 @@
+/* ══════════════════════════════════════════════════
+   SYNTHWAVE Music Player — style.css
+   Aesthetic: Retro-futuristic · Neon on deep navy
+   Fonts: Orbitron (display) + Rajdhani (body)
+   ══════════════════════════════════════════════════ */
+
+/* ── Variables ──────────────────────────────────────────── */
+:root {
+  --navy:       #080c18;
+  --navy-2:     #0d1525;
+  --navy-3:     #111e36;
+  --navy-card:  rgba(10,16,32,0.92);
+  --cyan:       #00e5ff;
+  --cyan-dim:   rgba(0,229,255,.12);
+  --cyan-glow:  rgba(0,229,255,.35);
+  --magenta:    #ff2d78;
+  --mag-dim:    rgba(255,45,120,.12);
+  --mag-glow:   rgba(255,45,120,.3);
+  --text:       #c8deff;
+  --text-muted: #4a6080;
+  --text-dim:   #2a3f60;
+  --border:     rgba(0,229,255,.12);
+  --radius-lg:  20px;
+  --radius-md:  12px;
+  --radius-sm:  6px;
+  --font-hd:    'Orbitron',  monospace;
+  --font-body:  'Rajdhani',  sans-serif;
+  --trans:      0.28s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* ── Reset ──────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; }
+body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  background: var(--navy);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+}
+button { cursor: pointer; font-family: inherit; border: none; background: none; color: inherit; }
+ul     { list-style: none; }
+
+/* ── Background decorations ─────────────────────────────── */
+.bg-grid {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(0,229,255,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,255,.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: linear-gradient(to bottom, transparent 0%, black 20%, black 80%, transparent 100%);
+}
+.bg-glow {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 60%, rgba(0,229,255,.08) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 35% at 80% 30%, rgba(255,45,120,.07) 0%, transparent 70%);
+}
+
+/* ── App layout ─────────────────────────────────────────── */
+.app {
+  position: relative; z-index: 1;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  padding: 24px 16px;
+  max-width: 820px;
+  width: 100%;
+}
+
+@media (max-width: 700px) {
+  .app { flex-direction: column; align-items: center; padding: 16px 12px; }
+}
+
+/* ── Shared card style ───────────────────────────────────── */
+.player-card, .playlist-card {
+  background: var(--navy-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  backdrop-filter: blur(20px);
+  box-shadow:
+    0 0 0 1px rgba(0,229,255,.04),
+    0 32px 80px rgba(0,0,0,.7),
+    inset 0 1px 0 rgba(0,229,255,.08);
+}
+
+/* ══ PLAYER CARD ══════════════════════════════════════════ */
+.player-card {
+  width: 340px;
+  flex-shrink: 0;
+  padding: 24px 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+.player-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.brand {
+  font-family: var(--font-hd);
+  font-size: 0.62rem;
+  letter-spacing: 0.22em;
+  color: var(--cyan);
+  opacity: 0.7;
+}
+.header-controls { display: flex; gap: 8px; }
+.hdr-btn {
+  width: 32px; height: 32px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted);
+  transition: color var(--trans), border-color var(--trans), background var(--trans);
+}
+.hdr-btn svg { width: 15px; height: 15px; }
+.hdr-btn:hover   { color: var(--cyan); border-color: var(--cyan-dim); }
+.hdr-btn.active  { color: var(--cyan); border-color: var(--cyan); background: var(--cyan-dim);
+                   box-shadow: 0 0 10px var(--cyan-glow); }
+
+/* ── Disc ────────────────────────────────────────────────── */
+.disc-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
+}
+.disc {
+  width: 180px; height: 180px;
+  border-radius: 50%;
+  position: relative;
+  background:
+    radial-gradient(circle at 50% 50%, #1a2540 0%, #0a1020 60%, #050c1a 100%);
+  border: 2px solid rgba(0,229,255,.15);
+  box-shadow:
+    0 0 0 6px rgba(0,0,0,.4),
+    0 0 30px rgba(0,229,255,.15),
+    0 16px 40px rgba(0,0,0,.6);
+  animation: discSpin 8s linear infinite paused;
+}
+.disc.spinning { animation-play-state: running; }
+
+/* Concentric groove rings */
+.disc::before {
+  content: '';
+  position: absolute; inset: 20px;
+  border-radius: 50%;
+  background:
+    repeating-radial-gradient(circle,
+      transparent 0px, transparent 5px,
+      rgba(0,229,255,.04) 5px, rgba(0,229,255,.04) 6px);
+}
+
+.disc-inner {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.disc-label {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--cyan) 0%, var(--magenta) 100%);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 20px var(--cyan-glow), 0 0 40px var(--mag-glow);
+}
+.disc-note { font-size: 1.4rem; color: #fff; }
+
+/* Shine overlay */
+.disc-shine {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255,255,255,.07) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.disc-shadow {
+  position: absolute;
+  bottom: -16px; left: 50%; transform: translateX(-50%);
+  width: 140px; height: 20px;
+  background: radial-gradient(ellipse, rgba(0,0,0,.6) 0%, transparent 70%);
+  filter: blur(8px);
+}
+
+@keyframes discSpin { to { transform: rotate(360deg); } }
+
+/* ── Visualizer bars ─────────────────────────────────────── */
+.visualizer {
+  position: absolute;
+  bottom: -8px; left: 50%; transform: translateX(-50%);
+  display: flex;
+  gap: 3px;
+  align-items: flex-end;
+  height: 28px;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.visualizer.active { opacity: 1; }
+.visualizer span {
+  width: 3px;
+  background: linear-gradient(to top, var(--magenta), var(--cyan));
+  border-radius: 2px;
+  min-height: 4px;
+  animation: barBounce 0.8s ease-in-out infinite alternate;
+}
+.visualizer span:nth-child(1)  { animation-delay: 0.00s; }
+.visualizer span:nth-child(2)  { animation-delay: 0.07s; }
+.visualizer span:nth-child(3)  { animation-delay: 0.14s; }
+.visualizer span:nth-child(4)  { animation-delay: 0.21s; }
+.visualizer span:nth-child(5)  { animation-delay: 0.28s; }
+.visualizer span:nth-child(6)  { animation-delay: 0.35s; }
+.visualizer span:nth-child(7)  { animation-delay: 0.42s; }
+.visualizer span:nth-child(8)  { animation-delay: 0.49s; }
+.visualizer span:nth-child(9)  { animation-delay: 0.42s; }
+.visualizer span:nth-child(10) { animation-delay: 0.35s; }
+.visualizer span:nth-child(11) { animation-delay: 0.28s; }
+.visualizer span:nth-child(12) { animation-delay: 0.21s; }
+.visualizer span:nth-child(13) { animation-delay: 0.14s; }
+.visualizer span:nth-child(14) { animation-delay: 0.07s; }
+.visualizer span:nth-child(15) { animation-delay: 0.00s; }
+
+@keyframes barBounce {
+  from { height: 4px;  opacity: 0.4; }
+  to   { height: 24px; opacity: 1;   }
+}
+
+/* ── Song info ───────────────────────────────────────────── */
+.song-info {
+  text-align: center;
+  margin-bottom: 22px;
+}
+.song-title {
+  font-family: var(--font-hd);
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 0 20px var(--cyan-glow);
+  margin-bottom: 6px;
+}
+.song-artist {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--cyan);
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+.song-album {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+/* ── Progress ────────────────────────────────────────────── */
+.progress-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.time-label {
+  font-family: var(--font-hd);
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  min-width: 30px;
+  text-align: center;
+}
+
+.progress-track {
+  flex: 1;
+  height: 4px;
+  background: var(--navy-3);
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+  border: 1px solid var(--text-dim);
+  transition: height var(--trans);
+}
+.progress-track:hover { height: 6px; }
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--cyan), var(--magenta));
+  border-radius: 4px;
+  position: relative;
+  width: 0%;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 8px var(--cyan-glow);
+}
+.progress-thumb {
+  position: absolute;
+  right: -6px; top: 50%;
+  transform: translateY(-50%) scale(0);
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 10px var(--cyan-glow);
+  transition: transform 0.2s;
+}
+.progress-track:hover .progress-thumb { transform: translateY(-50%) scale(1); }
+
+/* ── Transport controls ──────────────────────────────────── */
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.ctrl-btn {
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  transition: all var(--trans);
+}
+.ctrl-btn svg { pointer-events: none; }
+
+.ctrl-btn.secondary {
+  width: 44px; height: 44px;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+}
+.ctrl-btn.secondary svg { width: 22px; height: 22px; }
+.ctrl-btn.secondary:hover {
+  color: var(--cyan);
+  border-color: var(--cyan);
+  box-shadow: 0 0 14px var(--cyan-glow);
+  transform: scale(1.08);
+}
+
+.play-btn {
+  width: 64px; height: 64px;
+  background: linear-gradient(135deg, var(--cyan) 0%, #0091a8 100%);
+  box-shadow: 0 0 20px var(--cyan-glow), 0 8px 24px rgba(0,0,0,.4);
+}
+.play-btn svg { width: 28px; height: 28px; color: var(--navy); }
+.play-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 32px var(--cyan-glow), 0 10px 28px rgba(0,0,0,.5);
+}
+.play-btn:active { transform: scale(0.96); }
+
+/* ── Volume ──────────────────────────────────────────────── */
+.volume-section {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.vol-icon {
+  width: 28px; height: 28px;
+  color: var(--text-muted);
+  display: flex; align-items: center; justify-content: center;
+  transition: color var(--trans);
+  flex-shrink: 0;
+}
+.vol-icon:hover { color: var(--cyan); }
+.vol-icon svg { width: 18px; height: 18px; }
+
+.vol-track {
+  flex: 1;
+  height: 3px;
+  background: var(--navy-3);
+  border-radius: 4px;
+  cursor: pointer;
+  border: 1px solid var(--text-dim);
+  position: relative;
+  transition: height var(--trans);
+}
+.vol-track:hover { height: 5px; }
+.vol-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--magenta), var(--cyan));
+  border-radius: 4px;
+  position: relative;
+  width: 80%;
+  box-shadow: 0 0 6px var(--mag-glow);
+}
+.vol-thumb {
+  position: absolute;
+  right: -5px; top: 50%;
+  transform: translateY(-50%) scale(0);
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 8px var(--cyan-glow);
+  transition: transform 0.2s;
+}
+.vol-track:hover .vol-thumb { transform: translateY(-50%) scale(1); }
+.vol-pct {
+  font-family: var(--font-hd);
+  font-size: 0.58rem;
+  color: var(--text-muted);
+  min-width: 30px;
+  text-align: right;
+  letter-spacing: 0.08em;
+}
+
+/* ══ PLAYLIST CARD ════════════════════════════════════════ */
+.playlist-card {
+  flex: 1;
+  min-width: 0;
+  padding: 20px 0 12px;
+  max-height: 500px;
+  display: flex;
+  flex-direction: column;
+}
+@media (max-width: 700px) {
+  .playlist-card { width: 340px; max-height: 280px; }
+}
+
+.pl-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 0 20px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.pl-title {
+  font-family: var(--font-hd);
+  font-size: 0.62rem;
+  letter-spacing: 0.24em;
+  color: var(--cyan);
+  opacity: 0.8;
+}
+.pl-count {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+}
+
+.pl-list {
+  overflow-y: auto;
+  flex: 1;
+  padding: 8px 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--navy-3) transparent;
+}
+.pl-list::-webkit-scrollbar       { width: 4px; }
+.pl-list::-webkit-scrollbar-track { background: transparent; }
+.pl-list::-webkit-scrollbar-thumb { background: var(--navy-3); border-radius: 4px; }
+
+/* ── Playlist item ───────────────────────────────────────── */
+.pl-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background var(--trans);
+  border-left: 2px solid transparent;
+}
+.pl-item:hover    { background: rgba(0,229,255,.04); }
+.pl-item.active   {
+  background: var(--cyan-dim);
+  border-left-color: var(--cyan);
+}
+
+.pl-num {
+  font-family: var(--font-hd);
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  width: 18px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.pl-item.active .pl-num { color: var(--cyan); }
+
+.pl-bars {
+  display: none;
+  gap: 2px;
+  align-items: flex-end;
+  height: 14px;
+  width: 18px;
+  flex-shrink: 0;
+}
+.pl-item.active.playing .pl-num  { display: none; }
+.pl-item.active.playing .pl-bars { display: flex; }
+.pl-bars span {
+  width: 3px;
+  background: var(--cyan);
+  border-radius: 1px;
+  animation: barBounce 0.7s ease-in-out infinite alternate;
+}
+.pl-bars span:nth-child(1) { animation-delay: 0.0s; }
+.pl-bars span:nth-child(2) { animation-delay: 0.2s; }
+.pl-bars span:nth-child(3) { animation-delay: 0.1s; }
+
+.pl-info { flex: 1; min-width: 0; }
+.pl-name {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.04em;
+}
+.pl-item.active .pl-name { color: #fff; }
+.pl-artist-name {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pl-dur {
+  font-family: var(--font-hd);
+  font-size: 0.6rem;
+  color: var(--text-muted);
+  letter-spacing: 0.06em;
+  flex-shrink: 0;
+}
+.pl-item.active .pl-dur { color: var(--cyan); }
+
+/* ── Focus ring ──────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
